@@ -26,7 +26,6 @@ IntegerArray::IntegerArray(const IntegerArray& other){
     } 
 }
 
-
 IntegerArray::IntegerArray(const std::initializer_list<int>& l){
     _length = l.size();
     _data = new int[_length]{0};
@@ -41,7 +40,6 @@ IntegerArray::IntegerArray(const std::initializer_list<int>& l){
 
 
 IntegerArray& IntegerArray::operator=(const IntegerArray& other){
-    
     //Проверка не ссылается ли другой объект на этот же, т.е. на самоприсваивание
     if(&other == this) return *this;
     
@@ -96,7 +94,6 @@ void IntegerArray::reallocate(int newLength){
     _data = new int[newLength]{0};
     _length = newLength;
 }     
-
 
 // resize resizes the array.  Any existing elements will be kept.  This function operates slowly.
 void IntegerArray::resize(int newLength){
@@ -183,7 +180,6 @@ void IntegerArray::PushBack(int value){
 
 //Удаляет элемент из массива
 void IntegerArray::Remove(int index){
-    
     // Проверяем входил ли индекс в имеющиеся
     if(index < 0 || index > _length) throw std::invalid_argument(std::to_string(index) + " не верный index в remove"s);
     
@@ -202,7 +198,6 @@ void IntegerArray::Remove(int index){
     }
     
     // Copy all of the values after the removed element
-    
     for(int i = index+1; i < _length; ++ i){
         newdata[i - 1] = _data[i];
     }
@@ -214,7 +209,6 @@ void IntegerArray::Remove(int index){
 }
 
 void IntegerArray::Show() const {
-    
     for(int i = 0; i < _length; ++i){
         std::cout << _data[i];
         

@@ -14,7 +14,6 @@ class IntegerArray {
     IntegerArray(const IntegerArray& other);
     IntegerArray(const std::initializer_list<int>& l);
     
-    
     ~IntegerArray();
     
     void erase();
