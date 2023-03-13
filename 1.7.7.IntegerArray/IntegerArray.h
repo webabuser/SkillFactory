@@ -4,8 +4,8 @@
 #include <iostream>
 #include <string>
 #include <cmath>
-
-
+#include <exception>
+#include "BadRange.h"
 
 class IntegerArray {
  public:

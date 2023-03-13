@@ -1,16 +1,23 @@
 #include "IntegerArray.h"
-using namespace std::string_literals;
 
-IntegerArray::IntegerArray() {std::cout << "Worked Default Constructor - "<< this << std::endl;}
+IntegerArray::IntegerArray() {
+    std::cout << "Worked Default Constructor - "<< this << std::endl;
+}
 
 IntegerArray::IntegerArray(int length) 
     : _length(length){
         
         if(length <= 0 || length > std::numeric_limits<int>::max()) {
-            throw std::invalid_argument(std::to_string(length) + " не верный аргумент в конструкторе"s);
+            throw BadLength();
         }
-
-        _data = new int[length]{0};
+        
+        try{
+            _data = new int[length]{0};
+        }
+        catch(const std::exception& ex) {
+            std::cerr << "Не смогли выделить памать " << ex.what() << std::endl;
+            throw;
+        }
         
         std::cout << "Worked Constructor - " << this << std::endl;
 }
@@ -28,14 +35,21 @@ IntegerArray::IntegerArray(const IntegerArray& other){
 
 IntegerArray::IntegerArray(const std::initializer_list<int>& l){
     _length = l.size();
-    _data = new int[_length]{0};
-
+    
+    try{
+        _data = new int[_length]{0};
+    }
+    catch(const std::exception& ex) {
+            std::cerr << "Не смогли выделить памать " << ex.what() << std::endl;
+            throw;
+    }
+    
     int i = 0;
     for(const int* ptr = l.begin(); ptr != l.end() && i < _length; ++ptr, ++i){
         _data[i] = *ptr;
     }
     
-    std::cout << "Worked initializer_list Constructor - " << this << std::endl;
+   std::cout << "Worked initializer_list Constructor - " << this << std::endl;
  }
 
 
@@ -59,8 +73,7 @@ IntegerArray& IntegerArray::operator=(const IntegerArray& other){
 IntegerArray::~IntegerArray(){
     delete[] _data;
      // we don't need to set m_data to null or m_length to 0 here, since the object will be destroyed immediately after this function anyway
-    std::cout << '\n'; 
-    std::cout << "Worked DeStructor - " << this << std::endl; 
+    std::cout << "Worked DeStructor - " << this << std::endl<<std::endl; 
 }
 
 
@@ -74,7 +87,7 @@ void IntegerArray::erase(){
 }
 
 int& IntegerArray::operator[](int index){
-    if(index < 0 || index > _length) throw std::invalid_argument(std::to_string(index) + " не верный аргумент в operator[]"s);
+    if(index < 0 || index > _length) throw BadRange();
     return _data[index];
 }
 
@@ -88,10 +101,17 @@ void IntegerArray::reallocate(int newLength){
     erase(); 
     
     // If our array is going to be empty now, return here
-    if (newLength <= 0)
-        return; 
+    if(newLength <= 0 || newLength > std::numeric_limits<int>::max()) {
+        throw BadLength();
+    }
+        
+    try{
+        _data = new int[newLength]{0};
+    }catch(const std::exception& ex) {
+        std::cerr << "Не смогли выделить памать " << ex.what() << std::endl;
+        throw;
+    }
     
-    _data = new int[newLength]{0};
     _length = newLength;
 }     
 
@@ -101,8 +121,11 @@ void IntegerArray::resize(int newLength){
     if (newLength == _length)
         return;
     
-    // If we are resizing to an empty array, do that and return  
-    if(newLength <= 0){
+    // If we are resizing to an empty array, do that and return 
+    if(newLength < 0 || newLength > std::numeric_limits<int>::max()) {
+        throw BadLength();
+    }
+    if(newLength == 0){
         erase();
         return;
     }
@@ -114,6 +137,7 @@ void IntegerArray::resize(int newLength){
     // point to the new array.
     
     // First we have to allocate a new array
+    try{
     int* newdata = new int[newLength]{0};  // int* data{ new int[newLength] }; - universal initialisation  
     
     // Then we have to figure out how many elements to copy from the existing
@@ -139,35 +163,50 @@ void IntegerArray::resize(int newLength){
     
     _data = newdata;
     _length = newLength;
+    
+    }
+    catch(const std::exception& ex) {
+        std::cerr << "Не смогли выделить памать " << ex.what() << std::endl;
+        throw;
+    }
 }
 
 void IntegerArray::insertBefore(int value, int index){
     //Проверка на допустимость индекса
-    if(index < 0 || index > _length) throw std::invalid_argument(std::to_string(index) + " не верный аргумент в insertBefore"s);
+    if(index < 0 || index > _length) throw BadRange();
     
     // First create a new array one element larger than the old array
     
-    int* newdata = new int[_length + 1]{0};
     
-    // Copy all of the elements up to the index
-    for (int i = 0; i < index; ++ i){
-        newdata[i] = _data[i];
-    }
-    
-    // Insert our new element into the new array
-    newdata[index] = value;
-    
-    // Copy all of the values after the inserted element
-    for(int i = index; i < _length; ++i){
+    try{
+        int* newdata = new int[_length + 1]{0};
         
-        newdata[i+1] = _data[i];
+        // Copy all of the elements up to the index
+        for (int i = 0; i < index; ++ i){
+            newdata[i] = _data[i];
+        }
+        
+        // Insert our new element into the new array
+        newdata[index] = value;
+        
+        // Copy all of the values after the inserted element
+        for(int i = index; i < _length; ++i){
+            
+            newdata[i+1] = _data[i];
+        }
+        
+        //Finally, delete the old array, and use the new array instead
+        
+        delete[] _data;
+        _data = newdata;
+        ++_length;
+        
     }
-    
-    //Finally, delete the old array, and use the new array instead
-    
-    delete[] _data;
-    _data = newdata;
-    ++_length;
+    catch(const std::exception& ex) {
+        std::cerr << "Не смогли выделить памать " << ex.what() << std::endl;
+        throw;
+    }   
+        
 }
 
 void IntegerArray::PushFront(int value){
@@ -181,7 +220,7 @@ void IntegerArray::PushBack(int value){
 //Удаляет элемент из массива
 void IntegerArray::Remove(int index){
     // Проверяем входил ли индекс в имеющиеся
-    if(index < 0 || index > _length) throw std::invalid_argument(std::to_string(index) + " не верный index в remove"s);
+    if(index < 0 || index > _length) throw BadRange();
     
     // If this is the last remaining element in the array, set the array to empty and bail out
     if(_length == 1){
@@ -189,23 +228,30 @@ void IntegerArray::Remove(int index){
         return;
     }
     
-    // First create a new array one element smaller than the old array
-    int* newdata = new int[_length - 1]{0};
-    
-    // Copy all of the elements up to the index
-    for (int i = 0; i < index; ++i){
-        newdata[i] = _data[i];
-    }
-    
-    // Copy all of the values after the removed element
-    for(int i = index+1; i < _length; ++ i){
-        newdata[i - 1] = _data[i];
-    }
-    
-    // Finally, delete the old array, and use the new array instead
-    delete[] _data;
-    _data = newdata;
-    --_length;
+    try{
+        // First create a new array one element smaller than the old array
+        int* newdata = new int[_length - 1]{0};
+        
+        // Copy all of the elements up to the index
+        for (int i = 0; i < index; ++i){
+            newdata[i] = _data[i];
+        }
+        
+        // Copy all of the values after the removed element
+        for(int i = index+1; i < _length; ++ i){
+            newdata[i - 1] = _data[i];
+        }
+        
+        // Finally, delete the old array, and use the new array instead
+        delete[] _data;
+        _data = newdata;
+        --_length;
+        
+    }    
+    catch(const std::exception& ex) {
+        std::cerr << "Не смогли выделить памать " << ex.what() << std::endl;
+        throw;
+    }      
 }
 
 void IntegerArray::Show() const {
