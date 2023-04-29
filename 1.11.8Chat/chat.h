@@ -3,7 +3,6 @@
 #include "user.h"
 #include "message.h"
 
-
 class Chat {
  public:    
     Chat() = default;  
@@ -32,9 +31,6 @@ class Chat {
 };
 
 
-
-
-
 void Chat::Start()
 {
     std::cout << "Добро пожаловать в чат!" << std::endl;
@@ -42,13 +38,12 @@ void Chat::Start()
     while (chat_work_) 
     { 
         ShowMenu();
-        while(current_user_){
+        while(current_user_)
+        {
             ShowUserMenu(); 
         }
-    }
-    
+    }    
 }
-
 
 User* Chat::getUserByLogin(const std::string& login)
 {
@@ -106,7 +101,9 @@ void Chat::Login(){
     
     if((current_user_ = getUserByLogin(login)) && (current_user_->getPassword() == password)){
         std::cout << "Вы удачно авторизовались." << std::endl;
-    }else{
+    }
+    else
+    {
         std::cout << "Вы не верно ввели логин или пароль. " << std::endl;
         current_user_ = nullptr;
     }
@@ -168,12 +165,11 @@ void Chat::ShowUserMenu() {
         default:
             std::cout << "Вы не верно сделали выбор, повторите > ";
             break;
-    }
-                 
+    }                 
 }
 
-void Chat::ShowAllUsers(){
-    
+void Chat::ShowAllUsers()
+{    
     for(size_t i = 0; i < users_.getLength(); ++i){
         std::cout << users_[i].getLogin() << ", ";
     }
@@ -204,8 +200,7 @@ void Chat::SendPersonalMessage()
     std::getline(std::cin, message);
     
     Message messagetoall(current_user_->getLogin(), login, message );
-    messages_.PushBack(messagetoall);
-    
+    messages_.PushBack(messagetoall);    
 }
 
 void Chat::ShowAllMessages()
