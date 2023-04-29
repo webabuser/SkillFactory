@@ -23,4 +23,5 @@ Creating an object:
    objectname.Start(); 
 ~~~
 
+\* Идея архитектуры взята из вебинара.
 
