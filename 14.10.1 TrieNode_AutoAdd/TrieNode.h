@@ -6,11 +6,11 @@ using namespace std;
 
 const int ALPHABET_SIZE = 100; 
   
-// Структура узела дерева 
+// РЎС‚СЂСѓРєС‚СѓСЂР° СѓР·РµР»Р° РґРµСЂРµРІР° 
 struct TrieNode
 { 
     struct TrieNode* children[ALPHABET_SIZE];
-    // isEndOfWord - true, если ключ является концом слова
+    // isEndOfWord - true, РµСЃР»Рё РєР»СЋС‡ СЏРІР»СЏРµС‚СЃСЏ РєРѕРЅС†РѕРј СЃР»РѕРІР°
     bool isEndOfWord;
     
     TrieNode()
@@ -22,7 +22,7 @@ struct TrieNode
         }
     }
     
-    int count = 0; // Сколько слов соответствует конкретной букве.
+    int count = 0; // РЎРєРѕР»СЊРєРѕ СЃР»РѕРІ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ РєРѕРЅРєСЂРµС‚РЅРѕР№ Р±СѓРєРІРµ.
 };
 
 TrieNode *getNewNode(void);
