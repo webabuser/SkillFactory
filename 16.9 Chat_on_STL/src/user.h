@@ -1,0 +1,25 @@
+﻿#pragma once
+#include <iostream>
+#include <string>
+
+class User {
+ public:    
+    User();
+    User(const std::string& login, const std::string& password)
+        : login_(login), password_(password){          
+    }
+    
+    User(const User& us) = default;
+    
+    const std::string& getLogin() const {return login_;}
+    const std::string& getPassword() const {return password_;}
+    
+    void setUserPassword(const std::string& password) {password_ = password;}
+    
+    friend std::ostream& operator<<(std::ostream& out, const User& usr);
+    
+ private:     
+    std::string login_;
+    std::string password_;
+};
+

@@ -1,0 +1,11 @@
+﻿  chat.cpp
+E:\Обучение\C++\SkillFactory\Projects\16.9 Chat_on_STL\src\chat.cpp(176,8): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+E:\Обучение\C++\SkillFactory\Projects\16.9 Chat_on_STL\src\chat.cpp(210,53): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+  main.cpp
+  message.cpp
+  sha1.cpp
+E:\Обучение\C++\SkillFactory\Projects\16.9 Chat_on_STL\src\sha1.cpp(54,19): warning C4018: <: несоответствие типов со знаком и без знака
+  TrieNode.cpp
+  user.cpp
+  Создание кода...
+  Project1.vcxproj -> E:\Обучение\C++\SkillFactory\Projects\16.9 Chat_on_STL\x64\Debug\Project1.exe
