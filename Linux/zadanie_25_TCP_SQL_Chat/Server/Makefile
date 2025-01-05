@@ -19,7 +19,7 @@
 CC=g++
 CFLAGS=-c -Wall -g2 -O0 -std=c++17 #-g2 -O0 - флаги для gdb
 LDFLAGS=
-SOURCES= main.cpp chat.cpp TCP.cpp sha1.cpp message.cpp db.cpp config.cpp
+SOURCES= main.cpp chat.cpp TCP.cpp message.cpp db.cpp config.cpp message_manager.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=Server
 MYSQL = -lmysqlclient

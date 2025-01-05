@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
-#define DEB_conf false
+#define DEB_conf true
 
 class Config
 {

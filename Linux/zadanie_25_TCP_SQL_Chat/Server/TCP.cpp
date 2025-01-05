@@ -112,7 +112,7 @@ void ConnectManager::Receive (){
 
    // bzero(buffer, |FER);
     read(connection, buffer, MESSAGE_BUFFER);
-    cout << "Data received from client: " <<  message << endl;
+    cout << "Data received from client: " <<  buffer << endl;
    // bzero(message, MESSAGE_LENGTH);
 
 

@@ -8,9 +8,7 @@ class Message {
     Message() = default;
     ~Message() = default;
  
-    Message(const std::string& from, const std::string& to, const std::string& text) 
-        :from_(from), to_(to), text_(text){
-    }
+    Message(const std::string& from, const std::string& to, const std::string& text); 
     Message(const Message& mess);
     Message& operator=(const Message& mess);
   

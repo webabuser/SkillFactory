@@ -1,5 +1,10 @@
 ﻿#include "message.h"
 
+Message::Message(const std::string& from, const std::string& to, const std::string& text) 
+        :from_(from), to_(to), text_(text){}
+ 
+
+
 Message::Message(const Message& mess){
     //if(this == &mess) return;
     

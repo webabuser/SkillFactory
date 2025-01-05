@@ -2,9 +2,8 @@
 #include <vector>
 #include <unordered_map>
 //#include "user.h"
-#include "message.h"
+#include "message_manager.h"
 //#include "TrieNode.h"
-#include "sha1.h"
 #include "TCP.h"
 #include "db.h"
 
@@ -22,8 +21,8 @@ class Chat {
     void LoginProcedure(std::stringstream & ss);
     void SignUpProcedure(std::stringstream & ss);
 
-    bool Login(std::string login, char pass[], int pass_length);
-    bool SignUp(std::string login, char pass[], int pass_length);
+    //bool Login(std::string login, char pass[], int pass_length);
+    //bool SignUp(std::string login, char pass[], int pass_length);
     void Logout(std::stringstream & ss);
     bool IsLogged(std::stringstream & ss);
     void ShowAllMessages();
@@ -39,12 +38,11 @@ class Chat {
  private:
     bool chat_work_ = true; 
    // TrieNode::TrieNode* t = nullptr; // Тринода для автоопределения
-    std::unordered_map<std::string, uint*> users_;
+  //  std::unordered_map<std::string, uint*> users_;
     std::vector<Message> messages_;
     std::vector<std::string> logged_users_;    
     ConnectManager* CM_ = nullptr;
-    std::string reply_msg_;
-
     Database* db_conn_ = nullptr;
+    std::string reply_msg_;
 };
     

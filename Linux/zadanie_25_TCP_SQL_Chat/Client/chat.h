@@ -6,6 +6,7 @@
 //#include "TrieNode.h"
 //#include "sha1.h"
 #include "ClientManagerTCP.h"
+#include "sha1.h"
 //#define LOGINLENGTH 10
 #define DEB_Cl false  
 #define CEAN "\033[0;36m"

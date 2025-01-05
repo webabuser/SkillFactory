@@ -10,7 +10,7 @@
 CC=g++
 CFLAGS=-c -Wall
 LDFLAGS=
-SOURCES= main.cpp chat.cpp ClientManagerTCP.cpp#user.cpp message.cpp sha1.cpp chat.cpp TrieNode.cpp
+SOURCES= main.cpp chat.cpp ClientManagerTCP.cpp sha1.cpp#user.cpp message.cpp sha1.cpp chat.cpp TrieNode.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=Client
 

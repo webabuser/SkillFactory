@@ -1,6 +1,4 @@
 #include <string>
-//#include <string.h>
-//#include <conio.h> //_getch()
 #include <cassert>
 #include <cstring>
 #include <iostream>
@@ -12,16 +10,16 @@
 Chat::Chat()
 {
 //    t = new TrieNode::TrieNode();
-    std::cout << "Конструктор чата" << std::endl;  
-
+//    std::cout << "Конструктор чата" << std::endl;  
+    
     db_conn_ = Database::GetSinglton();
-   // db_conn_->dbInit();    
-    //Database* db_conn2 = Database::GetSinglton();
-
+    
     CM_ = new ConnectManager;
 }
 
+
 Chat::~Chat(){
+    delete db_conn_;
     delete CM_;
     std::cout << "Chat destructor" <<std::endl;
 }    
@@ -37,102 +35,91 @@ void Chat::Start()
     }    
 }
 
-bool Chat::SignUp(std::string login, char pass[], int pass_length)
-{
-    // std::pair<std::unordered_map<std::string, uint*>::iterator, bool>
-   // auto res =  users_.emplace(login, sha1(pass, pass_length));
-  //  return res.second;
-  
-    uint* sh =  sha1(pass, pass_length);  
-
-    std::cout << sh[0] << std::endl;
-    std::cout << sh[1] << std::endl;
-    std::cout << sh[2] << std::endl;
-    std::cout << sh[3] << std::endl;
-    std::cout << sh[4] << std::endl;
-    
-    
-    std::string query = "INSERT INTO users (login) VALUES ('" + login + "'); UPDATE hashes SET hash = " + " WHERE user_id = LAST_INSERT_ID()";
-
-        std::cout << query << std::endl;
-
-    delete[] sh;
-    
-    exit(1);
-}
-
-
-
-bool Chat::Login(std::string login, char pass[], int pass_length)
-{
-    uint* sh = sha1(pass, pass_length);
-
-    if (users_.find(login) != users_.end())
-    {
-        if (memcmp(users_.find(login)->second, sh, SHA1HASHLENGTHBYTES) == 0) // 0 if equal
-        {   
-            delete[] sh;
-            return true;
-        }
-    }
-
-    delete[] sh;            
-    return false;
-}
-
 
 void Chat::LoginProcedure(std::stringstream & ss)
 {   
     std::string login;
     std::string password;
-    ss >> login >> password; 
-      
-    const char* c_login = login.c_str();
-    const char* c_password = password.c_str();
+                     
+    ss >> login >> password;
+    // __asm__ __volatile__("int3");
+    reply_msg_ = "";
 
-    assert(login.size() == std::strlen(c_login));
-    assert(std::equal(login.begin(), login.end(), c_login));
-    assert(std::equal(c_login, c_login + login.size(), login.begin()));
-    assert('\0' == *(c_login + login.size()));
-
-    if (Login(login, (char*)c_password, std::strlen(c_password)))
-    {
-        logged_users_.push_back(login);
-        
-        reply_msg_ = "Login 1 Вы успешно залогинились - " + login;
-        return;
+    std::string query = "SELECT id, login  FROM users WHERE login = '" + login + "'";
+   
+    if (db_conn_->DbQuery(query) == false) {
+       if(DEB_Svr) std::cerr << "DEB_Svr: line "<<__LINE__<<" "<<__FILE__<<", query false." << std::endl;
+       reply_msg_ = "Login 0, не верный SQL запрос.";
+       return;
     }
 
-    reply_msg_ = "Login 0 Вы не верно набрали либо логин, либо пароль.";
+    std::map<std::size_t, std::vector<std::string>> result = db_conn_->GetResult();
+    if(result.empty())
+    {    
+        logged_users_.push_back(login);
+        reply_msg_ = "Login 0 Пользователя с таким логином не существует. Попытайтесь снова." ;
+        return;
+    }
+        
+    std::string query2 = "SELECT hash FROM hashes WHERE user_id = '" + result[0][0] + "'";
+    if (db_conn_->DbQuery(query2) == false) {
+       if(DEB_Svr) std::cerr << "DEB_Svr: line "<<__LINE__<<" "<<__FILE__<<", query false." << std::endl;
+       reply_msg_ = "Login 0, не верный SQL запрос.";
+       return;
+    }
+
+    std::map<std::size_t, std::vector<std::string>> result2 = db_conn_->GetResult();
+    
+    if(result2[0][0] != password){
+        reply_msg_  = "Login 0 Не верный пароль. Попытайтесь снова.";
+        return;
+    } 
+
+    logged_users_.push_back(login);
+    reply_msg_ = "Login 1 Вы успешно залогинились - " + login;
 }
 
 
 void Chat::SignUpProcedure(std::stringstream& ss)
 {
-      std::string login;
-      std::string password;
+    std::string login;
+    std::string password;
                      
-      ss >> login >> password;
+    ss >> login >> password;
+    // __asm__ __volatile__("int3");
+    std::string query = "SELECT id, login  FROM users WHERE login = '" + login + "'";
+   
+    if (db_conn_->DbQuery(query) == false) {
+       if(DEB_Svr) std::cerr << "DEB_Svr: line "<<__LINE__<<" "<<__FILE__<<", query false." << std::endl;
+        reply_msg_ = "SignUp 0 Регистрация не успешна, не верный SQL запрос.";
+        return;
+    }    
 
-    if(users_.find(login) != users_.end())
-    {      reply_msg_= "SignUp 0 Данный логин уже существует, выберите новый или авторизуйтесь.";
-    
-      std::cout << reply_msg_ << std::endl;
-      return;
+    if(db_conn_->CheckSelResult()){    
+        reply_msg_ = "SignUp 0 Такой пользователь уже зарегистрирован, попытайтесь снова." ;
+        return;
     }
 
-    //Добавляем имена пользователей в триноду, для последующего автоопределения
-   // insert(t, login);
 
-    const char* c_password = password.c_str();
 
-    // Добавляем пльзователя и пароль в unordered map
-   if(SignUp(login, (char*)c_password, password.size())){
-   
+    std::string query2 = "INSERT INTO users (login) VALUES ('" + login + "');";
+    std::string query3 = "UPDATE hashes SET hash ='" + password + "' WHERE user_id = LAST_INSERT_ID();";
+
+    if (db_conn_->DbQuery(query2) == false) {
+       if(DEB_Svr) std::cerr << "DEB_Svr: line "<<__LINE__<< " "<<__FILE__<<" query2 false." << std::endl;
+    }    
+    if (db_conn_->DbQuery(query3) == false) {
+       if(DEB_Svr) std::cerr << "DEB_Svr: line "<<__LINE__<<" " <<__FILE__ <<"  query3 false." << std::endl;
+    }
+
+    if(db_conn_->UDIresult()){
+       if(DEB_Svr) std::cout << "Пользователь успешно зарегистрирован" << std::endl;    
        reply_msg_ = "SignUp 1 Пользователь успешно зарегистрирован";
-   }else{
-       reply_msg_ = "SignUp 0 Регистрация не успешна!";
-   }
+    } else {
+        if(DEB_Svr)  std::cout << "Пользователь не зарегистрирован" << std::endl;
+        reply_msg_ = "SignUp 0 Пользователь Не зарегистрирова"; 
+    }    
+   return;
 }
 
 
@@ -157,16 +144,7 @@ void Chat::ShowAllUsers()
         reply_msg_ += user + " ";
     }    
     reply_msg_.pop_back();    
-  /*   
-    int i=0;
-    for (auto& pair : users_)
-    {
-        std::cout << i  << ". " << pair.first << "  ";
-        ++i;
-    }
-    std::cout << std::endl;
-  */
-}
+ }
 
 
 void Chat::SendMessageToAll(std::stringstream & ss)
@@ -191,10 +169,14 @@ void Chat::SendPersonalMessage(std::stringstream & ss)
     ss >> from_user >> to_user;
     std::getline(ss, msg);
 
+    Message_manager MM{};
+
+    /*
     Message messagetoall{from_user, to_user, msg};
     messages_.push_back(messagetoall);
     
     reply_msg_= "PersonalMessage 1 Персональное сообщение "+ from_user +" "+ to_user +" было послано"; 
+*/
 }
 
 

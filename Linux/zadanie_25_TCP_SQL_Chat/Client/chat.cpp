@@ -82,6 +82,8 @@ void Chat::LoginProcedure()
     std::cin >> login;
     std::cout << "Пароль: ";
     std::cin >> password;
+    
+    password = sha1_string(password);
 
     std::string message = "Login " + login + " " + password;
 
@@ -116,6 +118,11 @@ void Chat::SignUpProcedure()
     std::cin >> login;
     std::cout << "Пароль: ";
     std::cin >> password;
+
+    password = sha1_string(password);
+
+    std::cout << password << std::endl;
+  //  exit(0);
 
     std::string message = "SignUp " + login + " " + password;
 

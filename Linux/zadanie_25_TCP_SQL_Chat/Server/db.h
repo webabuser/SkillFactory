@@ -5,6 +5,8 @@
 
 #include "mysql/mysql.h"
 #include "config.cpp"
+#define DEB_db true
+
 
 using namespace std::string_literals;
 
@@ -17,12 +19,14 @@ class Database {
     static Database* GetSinglton(/*const std::string&*/);
     bool DbQuery(const std::string&);   
     std::map<size_t, std::vector<std::string>> GetResult();
-
+    void ShowResult(std::map<size_t, std::vector<std::string>>&);
+    bool UDIresult();
+    bool CheckSelResult();
     void dbInit();
 
- protected: 
-     Database();
      ~Database();
+ protected: 
+    Database();
  
  private:
 

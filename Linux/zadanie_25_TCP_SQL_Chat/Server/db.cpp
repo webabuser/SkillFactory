@@ -39,8 +39,7 @@ Database::Database()
 Database::~Database()
 { 
     mysql_close(&mysql_);
-    delete db_;
-    db_ = nullptr;
+//    delete db_; -- here no need to delete db_
     std::cout << "Деструктор DB" << std::endl;
 }    
 
@@ -48,8 +47,10 @@ Database::~Database()
 Database* Database::GetSinglton(/*const std::string& value*/)
 {
     if(db_ == nullptr){
+        if(DEB_db) std::cout << "Singlton make new Databese connection" << std::endl;
         db_ = new Database();
     }
+    if(DEB_db) std::cout << "Singlton use alive connection" << std::endl;
     return db_;
 }
 
@@ -88,6 +89,26 @@ bool Database::DbQuery(const std::string& str)
     return false;  
 }
 
+bool Database::UDIresult(){
+    std::cout << "SQL вернул " << mysql_affected_rows(&mysql_) <<" рядов." << std::endl;
+
+    if(mysql_affected_rows(&mysql_) > 0){
+
+        return true;
+    }
+    return false;
+}        
+
+
+bool Database::CheckSelResult(){
+    res_ = mysql_store_result(&mysql_);
+    
+    if(UDIresult()) {
+        mysql_free_result(res_);
+        return true;
+    }    
+    return false;
+}
 
 std::map<size_t, std::vector<std::string>> Database::GetResult()
 {
@@ -114,8 +135,25 @@ std::map<size_t, std::vector<std::string>> Database::GetResult()
 	}
 	else
 	    std::cerr << "GetResult: 0" << std::endl;
-    
-    return result;
 
+    mysql_free_result(res_);
+
+    return result;
 }    
 
+
+void Database::ShowResult(std::map<size_t, std::vector<std::string>>& result)
+{
+    for(auto [key, value] : result){
+        if(!result.empty()){
+             std::cout << key << "  ";
+
+             if(!value.empty()){
+                 for(size_t i = 0; i < value.size(); ++i){
+                     std::cout << value[i] <<", ";
+                 }
+             }
+             std::cout << std::endl;
+         }    
+     }
+}    
