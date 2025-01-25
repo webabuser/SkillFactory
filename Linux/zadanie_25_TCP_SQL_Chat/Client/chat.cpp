@@ -1,16 +1,15 @@
 #include <string>
-//#include <string.h>
-//#include <conio.h> //_getch()
 #include <cassert>
 #include <cstring>
 #include <iostream>
 #include "chat.h"
 #include <sstream>
 #include <algorithm>
+
 using namespace std::string_literals;
+
 Chat::Chat()
 {
-//    t = new TrieNode::TrieNode();  
 }
 
 Chat::~Chat(){
@@ -285,9 +284,9 @@ void Chat::SendPersonalMessage()
     std::string server_reply = CM.getBuffer();
     
     std::istringstream ss(server_reply);
-    std::string serv_command;
-    bool serv_res;
-    std::string serv_msg;
+//    std::string serv_command;
+//    bool serv_res;
+//    std::string serv_msg;
 
     std::cout << server_reply << std::endl;
 }

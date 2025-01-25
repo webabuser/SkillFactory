@@ -3,7 +3,7 @@
 #include <string>
 #include "db.h"
 #include "message.h"
-
+#include <vector>
 
 class Message_manager
 {
@@ -18,6 +18,6 @@ class Message_manager
 
  private:
     Database * db_ptr_ = nullptr;
-
+    std::vector<Message> messages_;
 
 };    

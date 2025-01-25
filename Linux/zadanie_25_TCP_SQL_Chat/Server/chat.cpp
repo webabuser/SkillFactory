@@ -22,6 +22,7 @@ Chat::~Chat(){
     delete db_conn_;
     delete CM_;
     std::cout << "Chat destructor" <<std::endl;
+    exit(0);
 }    
 
 void Chat::Start()
@@ -139,25 +140,56 @@ void Chat::Logout(std::stringstream & ss)
 
 
 void Chat::ShowAllUsers()
-{ 
+{
+    using namespace std::string_literals;
+
+   reply_msg_ = "";
+
+   std::string query = "SELECT login FROM users";
+
+   if (db_conn_->DbQuery(query) == false) {
+       if(DEB_Svr) std::cerr << "DEB_Svr: line "<<__LINE__<<" "<<__FILE__<<", query false." << std::endl;
+        reply_msg_ = "ShowAllUsers 0 Ошибка в sql запросе.";
+        return;
+    } 
+
+    std::map<std::size_t, std::vector<std::string>> result = db_conn_->GetResult();
+    
+    if(result.empty()) {
+        reply_msg_ = "There is nobody";
+        return;
+    }
+
+    for (const auto& [num, logname] : result){
+       reply_msg_ += logname[0] + " "s;
+    }    
+ }
+
+
+void Chat::ShowLoggedUsers()
+{
     for(auto user : logged_users_){
         reply_msg_ += user + " ";
     }    
     reply_msg_.pop_back();    
- }
+}
 
 
 void Chat::SendMessageToAll(std::stringstream & ss)
 {   
     std::string from_user;
-    std::string to_user = "all";
     std::string msg;
     ss >> from_user;
     std::getline(ss, msg);
 
-    Message messagetoall{std::move(from_user), to_user, msg};
-    messages_.push_back(messagetoall);
-    reply_msg_ = "SendMessageToAll 1 От " + from_user + " Сообщение ВСЕМ послано.";
+    Message mm{};
+    mm.setFrom(from_user);
+    mm.setText(msg);
+    if(mm.CreateForAll())
+        reply_msg_ = "SendMessageToAll 1 От " + from_user + " Сообщение ВСЕМ послано.";
+    else
+        reply_msg_ = "SendMessageToAll 0 От " + from_user + " Сообщение ВСЕМ НЕ послано.";
+    
 }
 
 
@@ -169,36 +201,46 @@ void Chat::SendPersonalMessage(std::stringstream & ss)
     ss >> from_user >> to_user;
     std::getline(ss, msg);
 
-    Message_manager MM{};
-
-    /*
-    Message messagetoall{from_user, to_user, msg};
-    messages_.push_back(messagetoall);
+    Message mm{from_user, to_user, msg};
+    mm.Create();
     
     reply_msg_= "PersonalMessage 1 Персональное сообщение "+ from_user +" "+ to_user +" было послано"; 
-*/
 }
 
 
 void Chat::ShowAllMessages()
 {
-    for(size_t i = 0; i < messages_.size(); ++i){
-        reply_msg_ +=  messages_[i].getText();
-        reply_msg_ += "\n";
-    }
 }
+ 
 
 void Chat::ShowPersonMessages(std::stringstream & ss)
 {
     std::string user;
     ss >> user;
 
-    for(size_t i = 0; i < messages_.size(); ++i){
-        if(messages_[i].getTo() == std::move(user))
-        reply_msg_ += (messages_[i].getText() + ",\n ");
+
+    reply_msg_ = "";
+
+    Message mm{};
+    mm.setTo(user);
+        
+   std::map<std::size_t, std::vector<std::string>> result = mm.ReadReceiver();
+
+    
+    if(result.empty()) {
+        reply_msg_ = "There is NO messages for you.";
+        return;
     }
-    reply_msg_ += "\n";
+
+    for (const auto& [num, vec] : result){
+       for(const std::string& m : vec){
+        
+           reply_msg_ += m + " "s;
+       }
+       reply_msg_ += "\n";
+    } 
 };
+
 
 bool Chat::IsLogged(std::stringstream & ss){
     

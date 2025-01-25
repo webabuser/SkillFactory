@@ -12,15 +12,15 @@ struct in_addr {
 };
 
 */
-//#include <iostream>
-//#include <stdlib.h>
-//#include <unistd.h>
-//#include <cstring>
+
 #pragma once
+
 #include <arpa/inet.h> //htonl....
 #include <sys/socket.h>//struct sockaddr_in
 #include <string>
- 
+
+#define DEB_CMCl false
+
 #define MESSAGE_BUFFER 4096 // Максимальный размер буфера для приема и передачи
 #define PORT 7777 // Номер порта, который будем использовать для приема и передачи 
 
@@ -32,30 +32,17 @@ class ConnectManager
 
     void SendMessage(const std::string& msg);
     void Receive();
-
     std::string getBuffer();
+
  private:
     void SockIni();
     void Connection();
-    
+
+ private:   
     struct sockaddr_in servaddr;
-//    struct sockaddr_in clientaddr;
-
     int socket_file_descriptor;
-    //int message_size;
-
-   // socklen_t sockaddr_length; //Describes the length of a socket address. This is an integer type of at least 32 bits.
 
     char buffer[MESSAGE_BUFFER]; 
     char message[MESSAGE_BUFFER];
 };
 
-
-/* 
-int main() {
-   // processRequest();
-     ConnectManager CM;
-    
-    return 0;
-}
-*/

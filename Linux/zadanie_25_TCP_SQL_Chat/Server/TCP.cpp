@@ -16,10 +16,12 @@
 
 #include <iostream>
 #include <stdlib.h>
-#include <unistd.h>
+#include <unistd.h>//fork
 #include <cstring>
 #include <arpa/inet.h> //htonl....
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/wait.h>//wait
 #include "TCP.h"
 
 using namespace std;
@@ -34,20 +36,27 @@ ConnectManager::ConnectManager(){
 
     
     
-       Accepting(); 
+       Accepting();
 
-
-       int pid = fork();
-       if(pid == 0) {
-            std::cout << "дочерний процесс " << getpid() << std::endl;
+       pid_t pid;
+       if((pid = fork()) < 0)
+       {
+           std::cerr <<"Can't fork" << std::endl; 
+           exit(1);
+       }
+       else if(pid == 0) 
+       {
+            std::cout << "Дочерний процесс " << getpid() << std::endl;
             break;
-       }else if(pid > 0){
-           std::cout << "Родительский процес зацикливается" <<getpid() << std::endl;
+       }
+       else if(pid > 0)
+       {
+           std::cout << "Родительский процес зацикливается " <<getpid() << std::endl;
            continue;
        }
     }
-
-   std::cout << ">>>>>>>>> "<< std::endl;
+    
+    setsid();
 }
 
 ConnectManager::~ConnectManager(){

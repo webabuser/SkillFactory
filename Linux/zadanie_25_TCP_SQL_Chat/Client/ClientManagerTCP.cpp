@@ -19,7 +19,6 @@ struct in_addr {
 #include <arpa/inet.h> //htonl....
 #include <sys/socket.h>
 #include "ClientManagerTCP.h"
-#define DEB_CMCl true
 
 using namespace std;
  

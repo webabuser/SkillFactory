@@ -1,0 +1,11 @@
+
+
+INSERT INTO messages
+SET
+sender_id = (SELECT id  FROM users WHERE login = 'Alex'),
+receiver_id = (SELECT id FROM users WHERE login = 'vic'),
+text = 'Hello';
+
+ALTER TABLE ваша_таблица AUTO_INCREMENT = значение;
+
+SELECT * FROM messages WHERE sender_id = (SELECT id FROM users WHERE login = 'Alex')
