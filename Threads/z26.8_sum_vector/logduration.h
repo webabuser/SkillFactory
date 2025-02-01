@@ -50,7 +50,7 @@ private:
 
 
 /*Чтобы посмотреть скомпилированные директивы препроцессора - 2 способа, предварительно закоментить includ'ы 
- *gcc -o log.ii logduration.h   или g++ -E -o log.ii logduration.h
+ *cpp -o log.ii logduration.h   или g++ -E -o log.ii logduration.h
  *
 LOG_DURATION("Hello");
 
