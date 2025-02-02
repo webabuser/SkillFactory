@@ -21,7 +21,7 @@ void calc_massiv(const std::vector<int64_t>& v, int64_t begin, int64_t end, int6
     
     res += s;
 
-    std::cout << "Cумма частей массива от " <<begin << " до " << end << " элемента:"<< s << std::endl;
+    std::cout << "Cумма частей массива от " <<begin << " до " << end << " элемента: "<< s << std::endl;
 }
 
 
@@ -51,17 +51,19 @@ int main()
         LOG_DURATION("Время вычисления потоками");
         
         std::vector<std::thread> threads;
-        threads.reserve((COUNT / PART) + 1);
+        threads.reserve((COUNT / PART) + 1);        
+       
+        //Вектор в котором будем хранить результат суммы потоков чтобы избежать гонки
+        std::vector<int64_t> result((COUNT / PART) + 1);
 
-        int64_t result = 0;
         
         int64_t part = PART;
 
-        for(int64_t i = 0; i < COUNT; i += PART)
+        for(int64_t i = 0, j = 0; i < COUNT; i += PART, ++j)
         {
             if((COUNT - i) < PART) part = COUNT - i;
 
-            std::thread t(calc_massiv, std::ref(massiv), i, (i+part), std::ref(result));
+            std::thread t(calc_massiv, std::ref(massiv), i, (i+part), std::ref(result[j]));
           
             threads.push_back(std::move(t));
         }
@@ -70,13 +72,16 @@ int main()
         const int64_t count_threads = threads.size();
         std::cout << "Количество потоков:" <<  count_threads << std::endl;
          
+        int64_t summa = 0;
+
         for (int64_t i = 0; i < count_threads; ++i)
         {
             threads[i].join();
+            summa += result[i];
         }
 
 
-         std::cout << "\nСумма элементов вектора вычисленная с помощью потоков: " << result << std::endl;
+         std::cout << "\nСумма элементов вектора вычисленная с помощью потоков: " << summa << std::endl;
     }
     return 0;
 }
