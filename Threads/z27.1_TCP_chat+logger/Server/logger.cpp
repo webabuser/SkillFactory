@@ -43,11 +43,15 @@ void Logger::inputToLog(const std::string& text)
 
 std::string Logger::getLastString()
 { 
-    m_.lock_shared();
 
+    m_.lock_shared();
     if(!log_.is_open()) {
         return "The log file is NOT opened";    
     }
+    m_.unlock_shared();
+
+
+    m_.lock_shared();
 
     bool keep = true;
 
