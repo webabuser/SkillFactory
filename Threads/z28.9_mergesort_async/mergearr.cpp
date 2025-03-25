@@ -32,12 +32,12 @@ void merge(T* arr, T l, T m, T r)
    T* right = new T[nr];
 
    // копируем данные во временные массивы
-   for (T i = 0; i < nl; i++)
+   for (std::size_t i = 0; i < nl; i++)
        left[i] = arr[l + i];
-   for (T j = 0; j < nr; j++)
+   for (std::size_t j = 0; j < nr; j++)
        right[j] = arr[m + 1 + j];
 
-   T i = 0, j = 0;
+   std::size_t i = 0, j = 0;
    T k = l;  // начало левой части
 
    while (i < nl && j < nr) {
@@ -74,18 +74,18 @@ void mergeSort(T* arr, T l, T r){
     
     if(l == r) return ;
     
-    T m = (l + r - 1) / 2;
+    T m = l + (r - l) / 2;
   
     if(asynchronous && (r - l) > difference){
         
         //std::cout << "asynchronous thread." << std::endl;
         std::future<void> f = std::async(std::launch::async, mergeSort<T>, std::ref(arr), l, m);
-        f.get();
+        //f.get();
         mergeSort<T>(arr, m + 1, r);
        
     } else { 
          //std::cout << "One thread." <<std::endl;
-         mergeSort(arr, l, m);
+         mergeSort<T>(arr, l, m);
          mergeSort<T>(arr, m + 1, r);
     }
     
@@ -143,6 +143,8 @@ int main()
     
     delete[] arr;
     delete[] same_arr;
+    
+    std::cout << "Program finished" << std::endl;
   
     return 0;
 }
