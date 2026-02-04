@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/styles">
+        <file>style.qss</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file>icons/search_35.png</file>
+        <file>icons/fingerprint_35.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,31 @@
+QListWidget::item:hover {
+    background-color: lightblue;
+}
+QListWidget::item:selected {
+    background-color: #add8e6;
+}
+
+QTextBrowser#tw_messages {
+
+background-color: #f9f9f9;
+border: 3px solid #ccc;
+border-radius: 5px;
+padding: 5px;
+
+font-size: 12pt;
+
+}
+
+QTextBrowser#tw_messages::selection {
+    background-color: #b0d7ff;
+    color: black;
+}
+
+QTextBrowser#tw_messages a {
+    color: #0066cc;
+    text-decoration: none;
+}
+QTextBrowser#tw_messages a:hover {
+    text-decoration: underline;
+    color: #ff6600;
+}
